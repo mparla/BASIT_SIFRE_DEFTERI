@@ -40,8 +40,8 @@ class _HakkindaState extends State<Hakkinda> {
                 ),
               ),
 
-              Text('Bu uygulama Mustafa PARLA tarafından yapılmıştır. '),
-
+              //Text('Bu uygulama Mustafa PARLA tarafından yapılmıştır. '),
+              Text( 'Bu uygulama Dr. Öğretim Üyesi Ahmet Cevahir ÇINAR tarafından yürütülen 3301456 kodlu MOBİL PROGRAMLAMA dersi kapsamında 203301106 numaralı Mustafa PARLA tarafından 30 Nisan 2021 günü yapılmıştır.'),
             ],
           ),
         ),
