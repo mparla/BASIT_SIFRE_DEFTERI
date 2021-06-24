@@ -12,6 +12,7 @@ class RecordList extends StatefulWidget {
 }
 
 class RecordListState extends State<RecordList> {
+  TextEditingController arama = TextEditingController();
   DatabaseHelper databaseHelper = DatabaseHelper();
   List<Record> recordList;
   int count = 0;
@@ -25,13 +26,49 @@ class RecordListState extends State<RecordList> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('KAYITLAR'),
+        backgroundColor: Colors.blue,
+        title: Text(
+          "KAYITLAR",
+          style: TextStyle(color: Colors.white),
+        ),
+        centerTitle: true,
+        bottom: PreferredSize(
+          preferredSize: Size.fromHeight(45),
+          child: Row(
+            children: [
+              Expanded(
+                child: Container(
+                  margin: const EdgeInsets.only(left: 12, bottom: 11.0),
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(24.0),
+                      color: Colors.white),
+                  child: TextFormField(
+                    controller: arama,
+                    decoration: InputDecoration(
+                      hintText: "Kayıt ara",
+                      contentPadding: const EdgeInsets.only(left: 24.0),
+                      border: InputBorder.none,
+                    ),
+                  ),
+                ),
+              ),
+              IconButton(
+                icon: Icon(
+                  Icons.search,
+                  color: Colors.white,
+                ),
+                onPressed: () {
+                  updateListViewQuery(arama.text);
+                },
+              )
+            ],
+          ),
+        ),
       ),
       body: getRecordListView(),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          //debugPrint('FAB clicked');
-          navigateToDetail(Record('', ''), 'Kayıt Ekle');
+            navigateToDetail(Record('', ''), 'Kayıt Ekle');
         },
         tooltip: 'Kayıt Ekle',
         child: Icon(Icons.add),
@@ -44,7 +81,7 @@ class RecordListState extends State<RecordList> {
       itemCount: count,
       itemBuilder: (BuildContext context, int position) {
         return Card(
-          color: Colors.white,
+          color: Colors.blue,
           elevation: 2.0,
           child: ListTile(
             leading: CircleAvatar(
@@ -66,8 +103,7 @@ class RecordListState extends State<RecordList> {
                 ),
               ],
             ),
-            onTap: () {
-              //debugPrint("ListTile Tapped");
+           onLongPress: () {
               navigateToDetail(this.recordList[position], 'Kayıt Düzenle');
             },
           ),
@@ -119,6 +155,20 @@ class RecordListState extends State<RecordList> {
       });
     });
   }
+
+  void updateListViewQuery(String srg) {
+    final Future<Database> dbFuture = databaseHelper.initializeDatabase();
+    dbFuture.then((database) {
+      Future<List<Record>> recordListFutureQry = databaseHelper.getRecordListQry(srg);
+      recordListFutureQry.then((recordList) {
+        setState(() {
+          this.recordList = recordList;
+          this.count = recordList.length;
+        });
+      });
+    });
+  }
+
 
 
 }

@@ -46,7 +46,7 @@ final unameController = TextEditingController();
 final passController = TextEditingController();
 
 String uname = "user";
-String pass = "1234";
+String pass =  "1234";
 
 class _LoginPageState extends State<LoginPage> {
 

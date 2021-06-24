@@ -89,7 +89,7 @@ class DatabaseHelper {
 
   Future<Database> initializeDatabase() async {
     // Get the directory path for both Android and iOS to store database.
-    final directory = await getDatabasesPath();    //getApplicationDocumentsDirectory();
+    final directory = await getDatabasesPath();
     String path = directory + 'Records.db';
 
     // Open/create the database at a given path
@@ -107,8 +107,17 @@ class DatabaseHelper {
   Future<List<Map<String, dynamic>>> getRecordMapList() async {
     Database db = await this.database;
 
-//		var result = await db.rawQuery('SELECT * FROM $todoTable order by $colTitle ASC');
     var result = await db.query(recordTable, orderBy: '$colName ASC');
+
+    return result;
+  }
+
+  // Fetch Operation: Get all todo objects from database
+  Future<List<Map<String, dynamic>>> getRecordMapListQuery(String qry) async {
+    Database db = await this.database;
+
+    var result = await db.rawQuery("SELECT * FROM $recordTable WHERE $colName LIKE '$qry%'");
+
     return result;
   }
 
@@ -142,13 +151,28 @@ class DatabaseHelper {
     return result;
   }
 
-  // Get the 'Map List' [ List<Map> ] and convert it to 'todo List' [ List<Todo> ]
+  // Get the 'Map List' [ List<Map> ] and convert it to 'todo List' [ List<Record> ]
   Future<List<Record>> getRecordList() async {
 
     var recordMapList = await getRecordMapList(); // Get 'Map List' from database
     int count = recordMapList.length;         // Count the number of map entries in db table
 
-    List<Record> recordList = []; // List<Record>(); burayı değiştirdim
+    List<Record> recordList = [];
+    // For loop to create a 'todo List' from a 'Map List'
+    for (int i = 0; i < count; i++) {
+      recordList.add(Record.fromMapObject(recordMapList[i]));
+    }
+
+    return recordList;
+  }
+
+  // Get the 'Map List' [ List<Map> ]
+  Future<List<Record>> getRecordListQry(String qry) async {
+
+    var recordMapList = await getRecordMapListQuery(qry); // Get 'Map List' from database
+    int count = recordMapList.length;         // Count the number of map entries in db table
+
+    List<Record> recordList = [];
     // For loop to create a 'todo List' from a 'Map List'
     for (int i = 0; i < count; i++) {
       recordList.add(Record.fromMapObject(recordMapList[i]));
